@@ -2,9 +2,7 @@
 export default {
   data() {
     return {
-      textColor: false,
       currentPlayer: "x",
-      //states: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
       states: [" ", " ", " ", " ", " ", " ", " ", " ", " "],
       winner: false,
     };
@@ -19,19 +17,12 @@ export default {
       if (this.states[index] === " ") {
         this.states[index] = this.currentPlayer;
       }
-      /*{
-          id: index,
-          content: this.currentPlayer,
-          textColor: this.textColor,
-        };*/
     },
     changePlayer() {
       if (this.currentPlayer === "x") {
         this.currentPlayer = "o";
-        this.textColor = true;
       } else {
         this.currentPlayer = "x";
-        this.textColor = false;
       }
     },
 
@@ -83,7 +74,7 @@ export default {
         :key="index"
         @click="playGame(index)"
         class="item"
-        :class="{ 'color-o': textColor, 'color-x': !textColor }"
+        :class="'player-' + state"
       >
         {{ state }}
       </div>
@@ -94,7 +85,9 @@ export default {
       @click="isClosing, resetGame()"
     >
       <h2 class="winning__message">
-        {{ currentPlayer }} hat<br />
+        <span :class="'player-' + currentPlayer">{{ currentPlayer }}</span>
+        <br />
+        hat<br />
         gewonnen !<br /><span class="emoji">🥳</span>
       </h2>
     </div>
@@ -147,23 +140,23 @@ export default {
 .item:hover {
   border-color: #df4bc1;
 }
-.color-x {
+.player-x {
   color: #ffa500;
 }
-.color-o {
+.player-o {
   color: rgb(12, 238, 250);
 }
 .winning__container {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: aquamarine;
+  color: #df4bc1;
   line-height: 7rem;
   text-align: center;
   text-transform: uppercase;
   width: 40rem;
   height: 95vh;
-  border: 2px solid blueviolet;
+  border: 2px solid #df4bc1;
   background-color: rgba(46, 1, 87, 0.874);
   position: absolute;
   top: 1rem;
