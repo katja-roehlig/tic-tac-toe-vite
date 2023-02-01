@@ -5,24 +5,44 @@ export default {
       currentPlayer: "x",
       states: [" ", " ", " ", " ", " ", " ", " ", " ", " "],
       winner: false,
+      onePlayer: false,
     };
   },
-  computed: {
+  methods: {
     isClosing() {
+      console.log("closing?");
       return (this.winner = false);
     },
-  },
-  methods: {
+    setPlayer() {
+      this.onePlayer = !this.onePlayer;
+    },
+
     playGame(index) {
       if (this.states[index] === " ") {
         this.states[index] = this.currentPlayer;
       }
     },
+
     changePlayer() {
+      console.log("changePlayer");
       if (this.currentPlayer === "x") {
         this.currentPlayer = "o";
+        if (this.onePlayer === true && this.states.includes(" ")) {
+          this.findPlayItem();
+        }
       } else {
         this.currentPlayer = "x";
+      }
+    },
+
+    findPlayItem() {
+      let randomIndex = Math.round(Math.random() * 9);
+      if (this.states[randomIndex] === " ") {
+        this.states[randomIndex] = this.currentPlayer;
+        console.log(this.states);
+        this.compareState();
+      } else {
+        this.findPlayItem();
       }
     },
 
@@ -58,8 +78,10 @@ export default {
         this.changePlayer();
       }
     },
+
     resetGame() {
-      return (this.states = [" ", " ", " ", " ", " ", " ", " ", " ", " "]);
+      this.states = [" ", " ", " ", " ", " ", " ", " ", " ", " "];
+      this.currentPlayer = "x";
     },
   },
 };
@@ -68,6 +90,14 @@ export default {
 <template>
   <main class="main__container">
     <h1 class="heading">TIC TAC TOE</h1>
+    <div class="btn__container">
+      <button @click.prevent="setPlayer" :class="{ active: onePlayer }">
+        1 Player
+      </button>
+      <button @click.prevent="setPlayer" :class="{ active: !onePlayer }">
+        2 Player
+      </button>
+    </div>
     <div class="play__container" @click="compareState()">
       <div
         v-for="(state, index) in states"
@@ -82,16 +112,17 @@ export default {
     <div
       class="winning__container"
       v-if="winner"
-      @click="isClosing, resetGame()"
+      @click="isClosing(), resetGame()"
     >
       <h2 class="winning__message">
-        <span :class="'player-' + currentPlayer">{{ currentPlayer }}</span>
+        <span class="winner" :class="'player-' + currentPlayer">{{
+          currentPlayer
+        }}</span>
         <br />
-        hat<br />
-        gewonnen !<br /><span class="emoji">🥳</span>
+        has won!<br /><span class="emoji">🥳</span>
       </h2>
     </div>
-    <button class="btn-reset" @click="resetGame()">Reset</button>
+    <button class="btn-reset" @click.prevent="resetGame()">Reset</button>
   </main>
 </template>
 
@@ -103,13 +134,23 @@ export default {
   align-items: center;
   background-color: black;
   width: 40rem;
-  height: 95vh;
-  margin: 1rem auto;
-  border: 2px solid blueviolet;
+  height: 100%;
+  margin: 0rem auto;
+  border: 3px solid blueviolet;
+}
+.btn__container {
+  width: 28rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.active {
+  border: 2px solid aquamarine;
+  color: aquamarine;
 }
 .heading {
   font-size: 3.5 rem;
-  padding-block: 2rem 1.5rem;
+  padding: 4rem 1.5rem 3rem 1.5rem;
   margin: 0 auto;
   color: #df4bc1;
   text-align: center;
@@ -140,11 +181,14 @@ export default {
 .item:hover {
   border-color: #df4bc1;
 }
+.winner {
+  text-transform: uppercase;
+}
 .player-x {
   color: #ffa500;
 }
 .player-o {
-  color: rgb(12, 238, 250);
+  color: aquamarine;
 }
 .winning__container {
   display: flex;
@@ -155,15 +199,15 @@ export default {
   text-align: center;
   text-transform: uppercase;
   width: 40rem;
-  height: 95vh;
+  height: 100%;
   border: 2px solid #df4bc1;
   background-color: rgba(46, 1, 87, 0.874);
   position: absolute;
-  top: 1rem;
+  top: 0rem;
+  font-size: 2rem;
 }
 .winning__message {
   animation: animate-winning-message 0.6s ease-out 0.1s 1 both;
-  font-size: 3.5rem;
 }
 @keyframes animate-winning-message {
   0% {
@@ -179,13 +223,47 @@ export default {
   font-size: 6rem;
   line-height: 10rem;
 }
-.btn-reset {
-  color: aquamarine;
+button {
+  color: #df4bc1;
   background-color: black;
-  font-size: 1.6rem;
+  font-size: 1.3rem;
   text-transform: uppercase;
-  border: 2px solid #df4bc1;
-  padding: 1rem 2rem;
-  margin: 3rem auto;
+  border: 2px solid blueviolet;
+  padding: 0.8rem 2rem;
+}
+.btn-reset {
+  margin: 3rem auto 8rem auto;
+}
+button:hover {
+  border-color: aquamarine;
+  color: aquamarine;
+}
+
+@media (max-width: 768px) {
+  .main__container {
+    width: 32rem;
+    margin: 0 auto;
+  }
+  .btn__container {
+    width: 19rem;
+  }
+  button {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+  .play__container {
+    width: 22rem;
+    height: 22rem;
+  }
+  .item {
+    width: 5rem;
+    height: 5rem;
+  }
+  .winning__container {
+    width: 36rem;
+    height: 100%;
+    font-size: 1.5rem;
+    line-height: 4rem;
+  }
 }
 </style>
