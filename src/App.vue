@@ -28,7 +28,7 @@ export default {
       if (this.currentPlayer === "x") {
         this.currentPlayer = "o";
         if (this.onePlayer === true && this.states.includes(" ")) {
-          this.findPlayItem();
+          setTimeout(this.findPlayItem, 1000);
         }
       } else {
         this.currentPlayer = "x";
